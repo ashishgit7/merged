@@ -50,13 +50,14 @@
 </template>
 
 <script>
+import db from "../firebase";
 export default {
   data () {
     return {
       title:"my vue file",
     candidatelocation:'',
     homeBgImg:'./img/back.png',
-    places:['Durgakund','HG'],
+    places:[],
     }
   },
   methods:{
@@ -93,6 +94,14 @@ export default {
                    this.homeBgImg='./img/back.png'
                  }
             }
+  db.collection("locations")
+      .doc("list")
+      .get()
+      .then(res => {
+        this.places = res.data().names;
+        //  console.log(this.availablelocation)
+      });
+  
   }
   
 }
