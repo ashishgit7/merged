@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="homeComp">
     <content-page></content-page>
     <!-- <Filterr></Filterr>
     <service></service>
@@ -86,7 +86,9 @@
   <div class="row m-3 justify-content-center p-3" style="box-shadow:7px 3px 39px -21px rgb(0, 0, 0)" data-aos="flip-left" data-aos-duration="5000" >
     <div class="col-6 col-xl-4">
     <img src="../assets/homeOwner.png" alt="" class="mt-2">
+    <router-link to="/propertyRegister">
     <button class=" mt-10" style="font-size:medium;padding:6px;width: 100%;border:solid black;border-width: medium;">List your Property</button>
+    </router-link>
      </div>
      <div class="col-6 col-xl-4">
       <p style="text-align:right;font-size: 4vw;" class="my-text"> RoomLelo is a
@@ -232,6 +234,7 @@ export default {
     }
   },
   mounted(){
+          this.$root.$children[0].$children[0].$el.style.display="block"; // to show nav bar
     window.onresize = () => {
                  
                  if(window.innerWidth<=480){
