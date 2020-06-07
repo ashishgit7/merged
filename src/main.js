@@ -12,20 +12,19 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'jquery/src/jquery.js'
 import VueCarousel from '@chenfengyuan/vue-carousel';
-// import checkbox from 'vue-material-checkbox'
+import checkbox from 'vue-material-checkbox'
 import store from './vuex/store'
-import Vuesax from 'vuesax'
-
-import 'vuesax/dist/vuesax.css' //Vuesax styles
-Vue.use(Vuesax, {
-  // options here
-})
-// Vue.use(checkbox)
-
+Vue.use(checkbox)
 
 Vue.use(VueCarousel);
 window.user_profile = false;
 window.invoiceNumber = "unknown";
+import Vuesax from 'vuesax'
+
+import 'vuesax/dist/vuesax.css' //Vuesax styles
+Vue.use(Vuesax, {
+
+})
 
 
 
