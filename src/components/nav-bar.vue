@@ -6,16 +6,12 @@
         <a class="navbar-brand" href="/index.html">
           <img style="width:134px" src="../assets/roomlelologo.png" alt="">
         </a>
-        <button class="btn btn-primary" @click="goto" >find home</button>
+        <button class="btn btn-primary" @click="goto">find home</button>
         <button class="navbar-toggler text-dark" type="button" v-on:click="showNav()">
           <span class="navbar-toggler-icon"></span>
         </button> 
       </div> 
     </nav>
-
-
-
-
 
     <div v-if = "renderNav" v-show = "show_nav" id="nav-menu" style="margin-top:0px; font-family:Montserrat; background:white; width:100%; padding-top:20px;">
       <ul style="margin:0;padding:0;padding-left:20px;padding-right:20px;">
@@ -110,7 +106,7 @@ export default {
     }
   },
   methods:{
-    goto:function(){
+     goto:function(){
            let queryObject = {
                 location: 'anywhere',
                 type: 'none',
@@ -119,7 +115,6 @@ export default {
          
           this.$router.push({name:'result',query:{queryObject}});
        },
-
     goToLog(){
       // set data of login  in vuex to use in user.vue
       store.commit({
@@ -142,14 +137,15 @@ export default {
       this.modifyNav();
 
       if(document.getElementById('homeComp')!=null)
-      document.getElementById('homeComp').style.display = 'none'
+        document.getElementById('homeComp').style.display = 'none'
 
       else if(document.getElementById('serachResult')!=null)
-      document.getElementById('serachResult').style.display = 'none'
+        document.getElementById('serachResult').style.display = 'none'
 
       else if(document.getElementById('propReg')!=null)
-      document.getElementById('propReg').style.display = 'none'
-        
+        document.getElementById('propReg').style.display = 'none'
+
+
 
       if(this.uid !== ""){
         this.shownav = true;
@@ -168,21 +164,24 @@ export default {
 
 
     },
+
     closeNav(){
       this.showbar = true;
       this.shownav = false;
       this.show_nav = false;
-      
-       if(document.getElementById('homeComp')!=null)
-      document.getElementById('homeComp').style.display = 'block'
+
+      if(document.getElementById('homeComp')!=null)
+        document.getElementById('homeComp').style.display = 'block'
 
       else if(document.getElementById('serachResult')!=null)
-      document.getElementById('serachResult').style.display = 'block'
+        document.getElementById('serachResult').style.display = 'block'
 
       else if(document.getElementById('propReg')!=null)
-      document.getElementById('propReg').style.display = 'block'
+        document.getElementById('propReg').style.display = 'block'
 
     },
+
+
     signOut() {
       if(user_profile != false){
        var auth2 = gapi.auth2.getAuthInstance();
@@ -198,6 +197,8 @@ export default {
      location.reload();
      alert("Logged Out")
    },
+
+
    modifyNav(){
     if(user_profile != false){
       this.uid = user_profile.getId();
@@ -206,30 +207,41 @@ export default {
     }
 
     if(user_profile != false ){  // if logged in via gmail
-      firebase.firestore().collection('userProfile').doc(user_profile.getId()).get().then(res =>{
+      firebase.firestore().collection('userProfile').doc(this.uid).get().then(res =>{
+
+        this.img = res.data().image;
+        var splitStr = user_profile.getName().toString().split(" ");
+        this.user_name = splitStr[0]
+
         if(res.data().personal.photo != undefined){
           this.img = res.data().personal.photo // get user image 
-          this.user_name = res.data().personal.name       }
-
-        }).catch(err =>{
-          document.getElementById('myDash').style.display = 'none';
-          document.getElementById('serviceReq').style.display = 'none';
-          document.getElementById('viewProfile').style.display = 'none';
-          this.img = user_profile.getImageUrl();
+          var splitStr = user_profile.getName().toString().split(" ");
+          this.user_name = splitStr[0]      
+        }
+        else
+        {
+          this.img = res.data().image;
           var splitStr = user_profile.getName().toString().split(" ");
           this.user_name = splitStr[0]
-        })
-    }else{ 
-      var uid = store.state.email+store.state.phone;
-      if(uid !=="")
+        }
+
+      }).catch(err =>{
+        this.img = user_profile.getImageUrl();
+        var splitStr = user_profile.getName().toString().split(" ");
+        this.user_name = splitStr[0]
+      })
+
+    }
+    else
+    { 
+      if(this.uid !=="" && this.uid !== null && this.uid !== undefined )
       {
        firebase.firestore().collection('userProfile').doc(uid).get().then(res =>{
-        this.user_name = res.data().personal.name
+        this.user_name = res.data().personal.name;
       }).catch(err =>{
-       document.getElementById('myDash').style.display = 'none';
-       document.getElementById('serviceReq').style.display = 'none';
-       document.getElementById('viewProfile').style.display = 'none';
-        this.img = "https://img.favpng.com/21/13/5/user-profile-default-computer-icons-network-video-recorder-png-favpng-7dPZA8WRdY80Uw3bdMWkEN4fR.jpg"
+       var splitStr = res.data().name.toString().split(" ");
+       this.user_name = splitStr[0]
+       this.img = "https://img.favpng.com/21/13/5/user-profile-default-computer-icons-network-video-recorder-png-favpng-7dPZA8WRdY80Uw3bdMWkEN4fR.jpg"
      })
 
       firebase.storage().ref("userImage/"+uid).getDownloadURL().then(url =>{
@@ -242,8 +254,32 @@ export default {
 
   }
 
-  this.renderNav = false;
-  this.renderNav = true;
+  if(this.uid !=="" && this.uid !== null && this.uid !== undefined || user_profile != false ){
+   firebase.firestore().collection('registeredUser').doc(this.uid).get().then(res =>{
+
+    if(res.data().registered){
+      document.getElementById('myDash').style.display = 'initial';
+      document.getElementById('serviceReq').style.display = 'initial';
+      document.getElementById('viewProfile').style.display = 'initial';
+    }else{
+
+      document.getElementById('myDash').style.display = 'none';
+      document.getElementById('serviceReq').style.display = 'none';
+      document.getElementById('viewProfile').style.display = 'none';
+    }
+  }).catch(err =>{
+    document.getElementById('myDash').style.display = 'none';
+    document.getElementById('serviceReq').style.display = 'none';
+    document.getElementById('viewProfile').style.display = 'none';
+  });
+}
+
+
+
+
+
+this.renderNav = false;
+this.renderNav = true;
 
 }
 
@@ -256,51 +292,8 @@ mounted(){
     this.uid = store.state.email+store.state.phone;
   }
 
-    if(user_profile !=false ){  // if logged in via gmail
-      firebase.firestore().collection('userProfile').doc(user_profile.getId()).get().then(res =>{
-        if(res.data().personal.photo != undefined){
-          this.img = res.data().personal.photo // get user image 
-          this.user_name = res.data().personal.name       }
-
-        }).catch(err =>{
-          console.log(err)
-        })
-    }else{ // error on new registration
-
-      var uid = store.state.email+store.state.phone;
-      if(uid !=="")
-      {
-       firebase.firestore().collection('userProfile').doc(uid).get().then(res =>{
-        this.user_name = res.data().personal.name
-      }).catch(err =>{
-
-        document.getElementById('myDash').style.display = 'none';
-        document.getElementById('serviceReq').style.display = 'none';
-        document.getElementById('viewProfile').style.display = 'none';
-
-      })
-
-      firebase.storage().ref("userImage/"+uid).getDownloadURL().then(url =>{
-        this.img = url;
-      }).catch(err =>{
-        this.img = "https://img.favpng.com/21/13/5/user-profile-default-computer-icons-network-video-recorder-png-favpng-7dPZA8WRdY80Uw3bdMWkEN4fR.jpg";
-        document.getElementById('myDash').style.display = 'none';
-        document.getElementById('serviceReq').style.display = 'none';
-        document.getElementById('viewProfile').style.display = 'none';
-      })
-
-    }
-
-  }
-
-
-
-
   this.modifyNav();
   window.modifyNav = this.modifyNav;
-
-},
-created(){
 
 }
 
