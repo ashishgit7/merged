@@ -49,11 +49,13 @@
   <!-- //////////high demand property end//////////// -->
   <!-- ///Refer box//// -->
     <h2 class="m-2 mx-3" style="font-size: xx-large;">Exciting Offer</h2>
+   <router-link to="/referAndEarn"> 
   <div class="rounded mx-auto "  data-aos="" data-aos-duration="3000" style="display:flow-root">
   
   <img src="../assets/img 1.png" id="excitingOfferimg" alt="" class="rounded mx-auto" style="width:96%;border-radius:10px;box-shadow: 7px 9px 30px -22px rgb(0, 0, 0)">
   
   </div>
+  </router-link>
   <!-- ///Refer box end//// -->
 
   <!-- ////////Our-collection/////////// -->
