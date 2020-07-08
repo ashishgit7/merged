@@ -32,11 +32,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="nameInput"> Visit Date </label>
-                                <input type="date" class="form-control" id="dateInput1" v-model="form.bookedDate">
-                            </div>
-                            <div class="form-group">
-                                <label for="emailInput"> email </label>
-                                <input type="email" class="form-control" id="emailInput" v-model="form.email">
+                                <input type="date" class="form-control" id="dateInput1" v-model="form.date">
                             </div>
                             <button type="button" class="btn btn-primary" @click="sendOTP" data-toggle="modal"
                                 :data-target="OTPModal" data-dismiss="modal">
@@ -82,7 +78,8 @@
                                 placeholder="OTP" />
                         </div>
                     </form>
-                    <div v-else class="text-success">{{bookedVisitMsg}} </div>
+                    <div v-else class="text-success">Congratulation your Visit has been booked Our agent will contact
+                        you soon </div>
                 </div>
                 <!-- <div id="recaptcha-container"></div> -->
                 <div v-show="!validation" class="modal-footer"
@@ -114,8 +111,6 @@
                         <div class="carousel-item" v-bind:class="{active:index===1}" v-for="(photo,index) in photos"
                             style=" text-align: center;" v-bind:key="index">
                             <img class="d-block w-100" v-bind:src="photo" alt="First slide">
-                            <!-- <iframe class="d-block w-100" :src="photo" ></iframe> -->
-                            <!-- <img src="https://i.ibb.co/3WySPTs/download.jpg" width="640" height="480" > -->
                         </div>
                     </div>
                     <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -358,10 +353,6 @@
                                 <label for="nameInput"> Visit Date </label>
                                 <input type="date" class="form-control" id="dateInput2" v-model="form.bookedDate">
                             </div>
-                            <div class="form-group">
-                                <label for="emailInput"> email </label>
-                                <input type="email" class="form-control" id="emailInput" v-model="form.email">
-                            </div>
                             <button type="button" class="btn btn-primary" @click="sendOTP" data-toggle="modal"
                                 :data-target="OTPModal">
                                 Sent OTP
@@ -449,6 +440,8 @@ import * as firebase from 'firebase';
 // import {scrollFunction} from '../smoothScrolling'
 import { Carousel, Slide } from 'vue-carousel';
 
+
+
 export default {
 
 components: {
@@ -477,62 +470,12 @@ components: {
       limit_amenity:2,
       limit_housefeature:3,
       limit_nearby:3,
-      OTPModal:'',
-      bookedVisitMsg:''
+      OTPModal:''
 
     }
   },
    
    methods: {
-     SMSuser(){
-         console.log("hello")
-         var URL =  "https://www.fast2sms.com/dev/bulk?authorization=bLhTVlxWKv8sYJOynkBMCQPU2meNS3uAXjrZ5D47c6gqpi0a1obPWLc8ywd2tAZ1YgjN9GSBC5HnF0VI&sender_id=RLL&message="+this.bookedVisitMsg+"&language=english&route=p&numbers="+this.form.phone;
-         console.log(URL);
-      	var settings = {
-				"async": true,
-				"crossDomain": true,
-				"url": URL,
-				"method": "GET"
-			}
-
-			$.ajax(settings).done(function (response) {
-				console.log(response);
-			});
-     },  
-     SMSmanager(){
-         console.log("hello")
-         var msg = "Visit confirmed for ("+this.property.name+" & property ID:"+this.property.id+") Customer name:- "+this.form.name+" & no. :- "+this.form.phone+"Date & time of visit:-  "+this.form.bookedDate ;
-
-         var URL =  "https://www.fast2sms.com/dev/bulk?authorization=bLhTVlxWKv8sYJOynkBMCQPU2meNS3uAXjrZ5D47c6gqpi0a1obPWLc8ywd2tAZ1YgjN9GSBC5HnF0VI&sender_id=RLL&message="+msg+"&language=english&route=p&numbers="+this.property.PMPhonenumber;
-         console.log(URL);
-      	var settings = {
-				"async": true,
-				"crossDomain": true,
-				"url": URL,
-				"method": "GET"
-			}
-
-			$.ajax(settings).done(function (response) {
-				console.log(response);
-			});
-     },  
-     SMSadmin(){
-         console.log("hello")
-         var msg = "Visit confirmed for ("+this.property.name+" & "+this.property.id+") Customer name:- "+this.form.name+" & no. :- "+this.form.phone+"Date & time of visit:-  "+this.form.bookedDate +"Property manager name "+this.property.manager+" & no.:-"+this.property.PMPhonenumber+" ";    
-
-         var URL =  "https://www.fast2sms.com/dev/bulk?authorization=bLhTVlxWKv8sYJOynkBMCQPU2meNS3uAXjrZ5D47c6gqpi0a1obPWLc8ywd2tAZ1YgjN9GSBC5HnF0VI&sender_id=RLL&message="+msg+"&language=english&route=p&numbers="+"9999999999";
-         console.log(URL);
-      	var settings = {
-				"async": true,
-				"crossDomain": true,
-				"url": URL,
-				"method": "GET"
-			}
-
-			$.ajax(settings).done(function (response) {
-				console.log(response);
-			});
-     },  
      simple_toggleAM(default_limit, filters_length) {
             this.limit_amenity = (this.limit_amenity === default_limit) ? filters_length : default_limit;
         },
@@ -548,10 +491,11 @@ components: {
            var  filters_length = keys.length;
             this.limit_nearby = (this.limit_nearby === default_limit) ? filters_length : default_limit;
         },  
-          
+     otpchange: function(){
+         this.wrongOtp=true;
+     },       
      
     sendOTP: function(){
-        
       this.wrongOtp=false;
       console.log(this.form.phone);
         if(this.form.phone.length != 10||this.form.name.length==0){
@@ -618,8 +562,6 @@ components: {
           this.validation = true;
           console.log(result);
           console.log("submitted");
-          this.bookedVisitMsg = "Thank you for choosing ROOMLELO your vist for ( /detail"+this.id+" ) has been confirmed for ("+ this.form.bookedDate +" ).Request you to call on ( "+this.property.PMPhonenumber + " to "+ this.property.manager +").To confirm or cancel your visit before reaching & bring your own mode of transportation for safety."
-
           /////
            firebase.firestore().collection('visits').add({
 
@@ -638,16 +580,11 @@ components: {
 
         }).catch(function(error) {
          console.log("wrong otp");
-           
+           otpchange();
           console.log(error);
         });
-         if(this.validation!=true){
-        this.wrongOtp=true;}
-        else{
-            this.SMSuser()
-            this.SMSmanager()
-            this.SMSadmin()
-        }
+        // if(this.validation!=true)
+        this.wrongOtp=true;
         
     }
   },
@@ -655,7 +592,6 @@ components: {
     let location ;
     let ForWhom ;
     let type;
-     
     db.collection("properties")
       .get()
       .then((res) => {
@@ -690,7 +626,6 @@ components: {
     this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container");
     console.log("hey");
     console.log(this.recaptchaVerifier)
-    
  
    
     // window.onscroll = function() {scrollFunction()};
